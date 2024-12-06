@@ -3,6 +3,7 @@ package com.example.dailyselfi;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Button;
@@ -68,6 +69,12 @@ public class MainActivity extends AppCompatActivity {
         btnDelete.setOnClickListener(v -> onDeletePhotos(photoAdapter.getAllSelected()));
         // Button: Chụp ảnh mới
         findViewById(R.id.btnTakePhoto).setOnClickListener(v -> checkCameraPermission());
+        Button btnOpenSettings = findViewById(R.id.btnOpenSettings);
+
+        btnOpenSettings.setOnClickListener(v -> {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void checkCameraPermission() {
@@ -99,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Quyền đã được cấp, mở camera
                 PhotoUtils.takePhoto(this);
+
             } else {
                 // Người dùng từ chối cấp quyền
                 Toast.makeText(this, "Bạn cần cấp quyền Camera để chụp ảnh!", Toast.LENGTH_SHORT).show();
@@ -113,6 +121,12 @@ public class MainActivity extends AppCompatActivity {
             photoList.clear();
             photoList.addAll(PhotoUtils.loadPhotos(this));
             photoAdapter.notifyDataSetChanged();
+            SharedPreferences prefs = this.getSharedPreferences("ReminderPrefs", this.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+
+            String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+            editor.putBoolean("photoTaken_" + today, true);
+            editor.apply();
             Toast.makeText(this, "Ảnh đã được lưu!", Toast.LENGTH_SHORT).show();
         }
     }
