@@ -64,7 +64,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
         // Xử lý khi nhấn vào item
         holder.itemView.setOnClickListener(v -> photoClickListener.onPhotoClick(photo));
-
+        holder.checkBox.setChecked(photo.isSelected());
         // Xử lý checkbox
         holder.checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> photo.setSelected(isChecked));
 

@@ -124,6 +124,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onDeletePhotos(ArrayList<PhotoModel> selectedPhotos) {
+        if(selectedPhotos.isEmpty()){
+            Toast.makeText(this,"Chưa chọn ảnh để xóa", Toast.LENGTH_SHORT).show();
+            return ;
+
+        }
         PhotoUtils.deletePhotos(this, selectedPhotos);
         photoList.clear();
         photoList.addAll(PhotoUtils.loadPhotos(this));
