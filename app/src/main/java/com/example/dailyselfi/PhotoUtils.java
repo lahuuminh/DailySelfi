@@ -97,5 +97,5 @@ public class PhotoUtils {
         Toast.makeText(context, "Ảnh đã được xóa!", Toast.LENGTH_SHORT).show();
     }
 
-  
+
 }

@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TimePicker;
@@ -65,12 +66,21 @@ public class SettingsActivity extends AppCompatActivity {
         if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
             calendar.add(Calendar.DAY_OF_YEAR, 1);
         }
-        alarmManager.setRepeating(
-                AlarmManager.RTC_WAKEUP,
-                calendar.getTimeInMillis(),  // Thời gian đầu tiên sẽ báo thức
-                AlarmManager.INTERVAL_DAY,    // Lặp lại mỗi 24 giờ
-                pendingIntent
-        );
+        // Nếu thiết bị chạy Android 6.0 (API 23) trở lên, sử dụng setExactAndAllowWhileIdle để alarm chính xác
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.getTimeInMillis(),  // Thời gian đầu tiên sẽ báo thức
+                    pendingIntent
+            );
+        } else {
+            alarmManager.setRepeating(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY,  // Lặp lại mỗi 24 giờ
+                    pendingIntent
+            );
+        }
 //        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
 }
