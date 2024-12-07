@@ -10,17 +10,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Cài đặt nhắc nhở" />
+
     <Button
         android:id="@+id/btnFilter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Filter by Date" />
+        android:text="Kiếm ảnh theo ngày" />
 
     <Button
         android:id="@+id/btnDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Delete Selected" />
+        android:text="Xóa các ảnh đã chon" />
 
     <Button
         android:id="@+id/btnTakePhoto"
