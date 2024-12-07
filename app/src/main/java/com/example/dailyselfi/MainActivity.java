@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -117,19 +118,32 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PhotoUtils.REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            photoList.clear();
-            photoList.addAll(PhotoUtils.loadPhotos(this));
-            photoAdapter.notifyDataSetChanged();
+        if (requestCode == PhotoUtils.REQUEST_TAKE_PHOTO ) {
+            if(resultCode == RESULT_OK){
+                photoList.clear();
+                photoList.addAll(PhotoUtils.loadPhotos(this));
+                photoAdapter.notifyDataSetChanged();
             SharedPreferences prefs = this.getSharedPreferences("ReminderPrefs", this.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
 
             String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
             editor.putBoolean("photoTaken_" + today, true);
             editor.apply();
-            Toast.makeText(this, "Ảnh đã được lưu!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Ảnh đã được lưu!", Toast.LENGTH_SHORT).show();
+            }else if (resultCode == RESULT_CANCELED) {
+                // Người dùng thoát mà không chụp
+                String currentPhotoPath = PhotoUtils.getCurrentPhotoPath();
+                if (currentPhotoPath != null) {
+                    File tempFile = new File(currentPhotoPath);
+                    if (tempFile.exists() && tempFile.delete()) {
+                        Toast.makeText(this, "Đã hủy chụp ảnh", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+            }
+
         }
-    }
+
 
     private void onPhotoClick(PhotoModel photo) {
         Intent intent = new Intent(this, PhotoDetailActivity.class);

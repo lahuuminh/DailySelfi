@@ -65,12 +65,12 @@ public class SettingsActivity extends AppCompatActivity {
         if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
             calendar.add(Calendar.DAY_OF_YEAR, 1);
         }
-
         alarmManager.setRepeating(
                 AlarmManager.RTC_WAKEUP,
                 calendar.getTimeInMillis(),  // Thời gian đầu tiên sẽ báo thức
                 AlarmManager.INTERVAL_DAY,    // Lặp lại mỗi 24 giờ
                 pendingIntent
         );
+//        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
 }
