@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -67,20 +68,33 @@ public class SettingsActivity extends AppCompatActivity {
             calendar.add(Calendar.DAY_OF_YEAR, 1);
         }
         // Nếu thiết bị chạy Android 6.0 (API 23) trở lên, sử dụng setExactAndAllowWhileIdle để alarm chính xác
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setExactAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    calendar.getTimeInMillis(),  // Thời gian đầu tiên sẽ báo thức
-                    pendingIntent
-            );
-        } else {
-            alarmManager.setRepeating(
-                    AlarmManager.RTC_WAKEUP,
-                    calendar.getTimeInMillis(),
-                    AlarmManager.INTERVAL_DAY,  // Lặp lại mỗi 24 giờ
-                    pendingIntent
-            );
+
+        try {
+            // Kiểm tra quyền trên Android 12+ (API 31)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (alarmManager.canScheduleExactAlarms()) {
+                    alarmManager.setExactAndAllowWhileIdle(
+                            AlarmManager.RTC_WAKEUP,
+                            calendar.getTimeInMillis(),
+                            pendingIntent
+                    );
+                } else {
+                    // Hiển thị thông báo nếu không có quyền
+                    Toast.makeText(this, "Ứng dụng không có quyền đặt báo thức chính xác.", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                // Đối với Android < 12
+                alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        calendar.getTimeInMillis(),
+                        pendingIntent
+                );
+            }
+        } catch (SecurityException e) {
+            Log.e("AlarmError", "Không thể đặt báo thức chính xác: " + e.getMessage());
         }
+
 //        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
+
 }
